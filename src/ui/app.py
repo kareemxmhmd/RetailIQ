@@ -41,7 +41,7 @@ def main():
     
     predict_btn = st.sidebar.button('Predict Segment', type='primary', use_container_width=True)
 
-    with st.sidebar.expander('ℹ️ About RetailIQ', expanded=False):
+    with st.sidebar.expander('About RetailIQ', expanded=False):
         st.markdown(
             """
             **RetailIQ** is an end-to-end customer segmentation engine powered by RFM analysis and KMeans clustering.

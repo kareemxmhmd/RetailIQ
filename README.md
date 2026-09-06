@@ -1,11 +1,6 @@
-# RetailIQ — Customer Segmentation Engine
+# RetailIQ-Customer Segmentation Engine
 
-[![Python](https://img.shields.io/badge/Python-3.11%2B-blue.svg?logo=python&logoColor=white)](https://www.python.org/)
-[![FastAPI](https://img.shields.io/badge/FastAPI-0.115%2B-009688.svg?logo=fastapi&logoColor=white)](https://fastapi.tiangolo.com/)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.40%2B-FF4B4B.svg?logo=streamlit&logoColor=white)](https://streamlit.io/)
-[![scikit-learn](https://img.shields.io/badge/scikit--learn-F7931E.svg?logo=scikit-learn&logoColor=white)](https://scikit-learn.org/)
-[![Docker](https://img.shields.io/badge/Docker-Ready-2496ED.svg?logo=docker&logoColor=white)](https://www.docker.com/)
-[![Tests](https://img.shields.io/badge/Tests-14%20Passing-brightgreen.svg)](https://docs.pytest.org/)
+> 🚀 **Live Demo:** Explore the deployed interactive application at [https://retailiq-n.streamlit.app/](https://retailiq-n.streamlit.app/)
 
 RetailIQ is an enterprise-grade machine learning system for customer segmentation built on retail transaction data. Combining behavioral **Recency, Frequency, Monetary (RFM)** analysis with unsupervised **KMeans clustering**, it converts raw e-commerce purchases into actionable business personas served via a high-performance **FastAPI** REST engine and an interactive **Streamlit** dashboard.
 
@@ -94,61 +89,7 @@ streamlit run src/ui/app.py
 ```
 
 Open `http://localhost:8501` to view customer distributions, RFM metrics, and test live predictions.
-
----
-
-## Technical Methodology
-
-1. **RFM Derivation**:
-   - **Recency ($R$)**: Days elapsed between the reference cutoff date and the customer's most recent transaction.
-   - **Frequency ($F$)**: Count of distinct purchase invoices per customer.
-   - **Monetary ($M$)**: Cumulative spend calculated as $\sum (\text{Quantity} \times \text{UnitPrice})$.
-2. **Transformations & Scaling**:
-   - Features exhibit substantial right-skewness. A logarithmic transformation ($\log_{1p}$) stabilizes variance, followed by `StandardScaler` normalization.
-3. **Cluster Evaluation**:
-   - Inertia curves (Elbow method) and Silhouette scores evaluate cluster separation across $k \in [2, 10]$ to select optimal partitions.
-4. **Drift Detection**:
-   - Baseline distribution comparison utilizing Population Stability Index (PSI):
-     $$\text{PSI} = \sum \left( (P_i - Q_i) \times \ln\left(\frac{P_i}{Q_i}\right) \right)$$
-     Alerts flag when $\text{PSI} > 0.2$, signaling the need for model recalibration.
-
----
-
-## Dataset
-
-Built on the renowned **UCI Online Retail Dataset** comprising transatlantic e-commerce transactions:
-- **Timeframe**: 01/12/2010 to 09/12/2011
-- **Transactions**: 541,909 records across 38 countries
-- **Attributes**: `InvoiceNo`, `StockCode`, `Description`, `Quantity`, `InvoiceDate`, `UnitPrice`, `CustomerID`, `Country`
-
----
-
-## Repository Structure
-
-```
-RetailIQ/
-├── artifacts/              # Serialized model, scaler, and segment mappings
-├── config/
-│   └── config.yaml         # Hyperparameters, paths, and segment labels
-├── data/
-│   └── Online Retail.csv   # Raw transaction records
-├── notebook/
-│   └── eda.ipynb           # Exploratory data analysis notebook
-├── reports/                # EDA distribution plots and summaries
-├── src/
-│   ├── api/                # FastAPI server, schemas, and endpoints
-│   ├── data/               # Ingestion, validation, and cleaning logic
-│   ├── features/           # RFM feature extraction and preprocessing
-│   ├── models/             # KMeans training, evaluation, and inference
-│   ├── monitoring/         # PSI drift detector and JSONL audit logging
-│   ├── ui/                 # Streamlit interactive application
-│   └── run_all.py          # End-to-end execution orchestrator
-├── tests/                  # Unit test suite
-├── Dockerfile              # Container definition
-├── docker-compose.yml      # Multi-service container orchestration
-├── requirements.txt        # Python dependencies
-└── README.md
-```
+Alternatively, access the hosted cloud demo directly at [https://retailiq-n.streamlit.app/](https://retailiq-n.streamlit.app/).
 
 ---
 
@@ -174,10 +115,3 @@ pytest tests/ -v
 ```
 
 ---
-
-## Author & Attribution
-
-- **Author**: [Kareem Mohamed](https://github.com/kareemxmhmd)
-- **GitHub**: [@kareemxmhmd](https://github.com/kareemxmhmd)
-- **Repository**: [https://github.com/kareemxmhmd/RetailIQ](https://github.com/kareemxmhmd/RetailIQ)
-
