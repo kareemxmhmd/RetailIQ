@@ -1,0 +1,8 @@
+Total Rows: 392692
+Date Range: 2010-12-01 08:26:00 to 2011-12-09 12:50:00
+Unique Customers: 4338
+Unique Products: 3877
+Unique Invoices: 18532
+Unique Countries: 37
+Total Revenue: 8887208.89
+Avg Order Value: 479.56

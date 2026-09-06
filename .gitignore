@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+*.egg
+.eggs/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ML Artifacts (retain production artifacts for out-of-the-box deployment)
+artifacts/*.pkl
+!artifacts/model.pkl
+!artifacts/scaler.pkl
+artifacts/*.json
+!artifacts/feature_columns.json
+!artifacts/segment_map.json
+
+# Runtime logs
+reports/*.jsonl
+
+# Environment
+.env
+
+# Pytest
+.pytest_cache/
+htmlcov/
+.coverage

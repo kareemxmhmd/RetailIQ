@@ -1,0 +1,62 @@
+paths:
+  raw_data: "data/Online Retail.csv"
+  artifacts_dir: "artifacts"
+  reports_dir: "reports"
+  audit_log: "reports/audit_log.jsonl"
+
+data:
+  encoding: "ISO-8859-1"
+  date_column: "InvoiceDate"
+  customer_id_col: "CustomerID"
+  invoice_col: "InvoiceNo"
+  quantity_col: "Quantity"
+  price_col: "UnitPrice"
+  country_col: "Country"
+  description_col: "Description"
+  stock_code_col: "StockCode"
+
+cleaning:
+  drop_cancelled: true
+  drop_negative_qty: true
+  drop_missing_customer: true
+  deduplicate: true
+
+rfm:
+  reference_date: "auto"
+
+model:
+  algorithm: "kmeans"
+  k_range: [2, 10]
+  random_state: 42
+
+segment_labels:
+  names:
+    - "VIP"
+    - "Loyal"
+    - "Regular"
+    - "At-Risk"
+    - "Dormant"
+    - "New"
+    - "Occasional"
+    - "Churned"
+  descriptions:
+    VIP: "Highest-value customers with recent, frequent, high-spend purchases."
+    Loyal: "Consistent repeat buyers with solid spend."
+    Regular: "Steady mid-tier customers."
+    At-Risk: "Previously active customers showing declining engagement."
+    Dormant: "Customers who haven't purchased in a long time."
+    New: "Recently acquired customers with few transactions."
+    Occasional: "Infrequent, low-value shoppers."
+    Churned: "Inactive customers with no recent purchases and low lifetime value."
+
+api:
+  host: "0.0.0.0"
+  port: 8000
+
+ui:
+  mode: "direct"
+  api_url: "http://localhost:8000"
+
+monitoring:
+  psi_buckets: 10
+  psi_threshold: 0.2

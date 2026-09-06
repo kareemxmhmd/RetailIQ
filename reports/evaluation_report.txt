@@ -1,0 +1,15 @@
+Evaluation Report
+=================
+
+Silhouette Score: 0.8958
+
+Cluster Sizes:
+Segment
+Loyal    4312
+VIP        26
+
+Cluster Stats (Means):
+           Recency  Frequency      Monetary
+Segment                                    
+Loyal    93.057978   3.897263   1543.536842
+VIP       6.038462  66.423077  85826.078077
