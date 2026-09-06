@@ -1,6 +1,6 @@
 # RetailIQ-Customer Segmentation Engine
 
-> 🚀 **Live Demo:** Explore the deployed interactive application at [https://retailiq-n.streamlit.app/](https://retailiq-n.streamlit.app/)
+> **Live Demo:** Explore the deployed interactive application at [https://retailiq-n.streamlit.app/](https://retailiq-n.streamlit.app/)
 
 RetailIQ is an enterprise-grade machine learning system for customer segmentation built on retail transaction data. Combining behavioral **Recency, Frequency, Monetary (RFM)** analysis with unsupervised **KMeans clustering**, it converts raw e-commerce purchases into actionable business personas served via a high-performance **FastAPI** REST engine and an interactive **Streamlit** dashboard.
 
