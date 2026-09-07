@@ -1,16 +1,21 @@
 """
 Audit logger for tracking model predictions in RetailIQ.
+Includes thread-safe local file appending for development and single-process servers.
+Note: For distributed multi-worker production deployments, an asynchronous queue or
+dedicated log aggregation service (e.g., Kafka, fluentd, or CloudWatch) is recommended.
 """
 import json
 import os
 import logging
-from datetime import datetime
+import threading
+from datetime import datetime, timezone
 
 logger = logging.getLogger(__name__)
+_audit_lock = threading.Lock()
 
 def log_prediction(input_data: dict, output_data: dict, config: dict) -> None:
     """
-    Log a prediction with its input and output data.
+    Log a prediction with its input and output data. Thread-safe via internal mutex.
 
     Args:
         input_data (dict): The input features for the prediction.
@@ -18,7 +23,7 @@ def log_prediction(input_data: dict, output_data: dict, config: dict) -> None:
         config (dict): The configuration dictionary containing paths.
     """
     record = {
-        'timestamp': datetime.utcnow().isoformat(),
+        'timestamp': datetime.now(timezone.utc).isoformat(),
         'input': input_data,
         'output': output_data
     }
@@ -27,8 +32,9 @@ def log_prediction(input_data: dict, output_data: dict, config: dict) -> None:
     os.makedirs(os.path.dirname(audit_log_path), exist_ok=True)
     
     try:
-        with open(audit_log_path, 'a', encoding='utf-8') as f:
-            f.write(json.dumps(record) + '\n')
+        with _audit_lock:
+            with open(audit_log_path, 'a', encoding='utf-8') as f:
+                f.write(json.dumps(record) + '\n')
         logger.info(f"Prediction audited and saved to {audit_log_path}")
     except Exception as e:
         logger.error(f"Failed to write prediction to audit log: {e}")

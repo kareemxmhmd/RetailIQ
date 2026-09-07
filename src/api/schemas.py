@@ -2,9 +2,9 @@ from pydantic import BaseModel, Field
 
 class PredictRequest(BaseModel):
     """Request schema for segment prediction."""
-    Recency: float = Field(..., ge=0, description="Days since last purchase")
-    Frequency: float = Field(..., ge=1, description="Number of unique invoices")
-    Monetary: float = Field(..., gt=0, description="Total spend amount")
+    Recency: float = Field(..., ge=0, le=1000, description="Days since last purchase")
+    Frequency: float = Field(..., ge=1, le=10000, description="Number of unique invoices")
+    Monetary: float = Field(..., gt=0, le=1000000.0, description="Total spend amount")
 
 class PredictResponse(BaseModel):
     """Response schema for segment prediction."""

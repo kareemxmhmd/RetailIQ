@@ -1,0 +1,12 @@
+{
+    "log_transform": true,
+    "clip_thresholds": {
+        "Frequency": 92.32600000000093,
+        "Monetary": 137376.70232000877
+    },
+    "feature_columns": [
+        "Recency",
+        "Frequency",
+        "Monetary"
+    ]
+}

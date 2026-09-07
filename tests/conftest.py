@@ -35,10 +35,21 @@ def sample_config() -> Dict[str, Any]:
         "rfm": {
             "reference_date": "auto"
         },
+        "preprocessing": {
+            "log_transform": True,
+            "outlier_clip_percentile": 0.999
+        },
+        "features": {
+            "model_features": ["Recency", "Frequency", "Monetary"],
+            "extra_features": ["AvgBasketSize", "AvgBasketValue", "Tenure", "UniqueProducts", "Country"]
+        },
         "model": {
             "algorithm": "kmeans",
+            "k": 8,
             "k_range": [2, 10],
-            "random_state": 42
+            "random_state": 42,
+            "n_init": 10,
+            "stability_bootstrap_samples": 3
         },
         "segment_labels": {
             "names": ["VIP", "Loyal", "Regular", "At-Risk", "Dormant", "New", "Occasional", "Churned"],

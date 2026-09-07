@@ -1,4 +1,10 @@
 {
+    "0": "Churned",
     "1": "VIP",
-    "0": "Loyal"
+    "2": "Regular",
+    "3": "Dormant",
+    "4": "Occasional",
+    "5": "Loyal",
+    "6": "New",
+    "7": "At-Risk"
 }
