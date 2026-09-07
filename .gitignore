@@ -23,13 +23,21 @@ env/
 .DS_Store
 Thumbs.db
 
-# ML Artifacts (retain production artifacts for out-of-the-box deployment)
+# Data files (raw large datasets should not be tracked in git; use cloud storage or DVC)
+data/*.csv
+data/*.xlsx
+data/*.parquet
+data/*.zip
+!data/.gitkeep
+
+# ML Artifacts (tracked for out-of-the-box local demo; in enterprise production use MLflow/S3/GCS model registry)
 artifacts/*.pkl
 !artifacts/model.pkl
 !artifacts/scaler.pkl
 artifacts/*.json
 !artifacts/feature_columns.json
 !artifacts/segment_map.json
+!artifacts/preprocessor_config.json
 
 # Runtime logs
 reports/*.jsonl

@@ -12,10 +12,11 @@ In e-commerce and modern retail, one-size-fits-all marketing results in low enga
 
 ### Key Highlights
 - **RFM Behavioral Modeling**: Quantifies purchase timeliness, transaction cadence, and lifetime monetary volume.
-- **Unsupervised KMeans Clustering**: Segments customers into distinct groups using log-transformed features and normalized distances, validated by Silhouette Analysis and the Elbow Method.
-- **Dual Serving Modes**: Features a low-latency FastAPI inference service (`/predict`) as well as an interactive Streamlit UI with live scoring.
+- **Unsupervised KMeans Clustering**: Segments customers into 8 distinct personas using log-transformed features (`np.log1p`), outlier percentile clipping, and `StandardScaler` normalized distances, validated by Silhouette Analysis, Calinski-Harabasz Index, Davies-Bouldin Index, and bootstrap stability (mean ARI > 0.90).
+- **Archetype Persona Mapping**: Uses Hungarian matching between cluster RFM centroids and business definitions to deterministically assign personas without collapsing into degenerate whale-only clusters.
+- **Dual Serving Modes**: Features a low-latency FastAPI inference service (`/predict` and `/health`) with bounded Pydantic validation as well as an interactive Streamlit UI with live scoring.
 - **Drift Monitoring**: Incorporates real-time Population Stability Index (PSI) tracking to detect when customer distributions shift over time.
-- **Production Architecture**: Packaged with Docker Compose, automated Pytest test suites, and strict configuration management.
+- **Production Architecture**: Packaged with Docker Compose, automated GitHub Actions CI workflow (`.github/workflows/ci.yml`), thread-safe audit logging, and centralized YAML configuration.
 
 ---
 
@@ -25,10 +26,10 @@ RetailIQ follows a modular, reproducible data science architecture:
 
 1. **Load & Clean**: Loads transaction records, drops cancellations (`InvoiceNo` starting with `C`), negative quantities, and missing customer IDs, while casting types cleanly.
 2. **Exploratory Data Analysis (EDA)**: Analyzes distributions, revenues by geography, and top products; exports summary visualizations to `reports/`.
-3. **RFM Feature Engineering**: Computes Recency (days since last purchase), Frequency (distinct invoice count), and Monetary (total spend) per customer.
-4. **Feature Preprocessing**: Handles skewness via log/power transformations and scales metrics using `StandardScaler`.
-5. **Clustering & Profiling**: Evaluates optimal $k$ via Elbow method and Silhouette scores, fits KMeans, and profiles clusters into interpretable business segments.
-6. **Inference & Monitoring**: Exposes a low-latency REST API and dashboard with real-time PSI (Population Stability Index) drift tracking.
+3. **RFM Feature Engineering**: Computes Recency (days since last purchase), Frequency (distinct invoice count), and Monetary (total spend) per customer, along with behavioral metrics (`AvgBasketSize`, `AvgBasketValue`, `Tenure`, `UniqueProducts`).
+4. **Feature Preprocessing**: Clips extreme wholesale outliers at the 99.9th percentile, applies `np.log1p` transformation to compress right-skewed Monetary and Frequency distributions, and scales metrics using `StandardScaler`.
+5. **Clustering & Profiling**: Evaluates $k$ across multiple metrics (Elbow Inertia, Silhouette, Calinski-Harabasz, Davies-Bouldin), trains KMeans ($k=8$), validates cluster stability via bootstrap resampling (mean ARI ~0.92), and maps clusters to business personas via multi-dimensional RFM archetype matching.
+6. **Inference & Monitoring**: Exposes a FastAPI REST API and dashboard with real-time PSI (Population Stability Index) drift tracking and thread-safe audit logging.
 
 ---
 
@@ -106,12 +107,22 @@ docker-compose up --build
 
 ---
 
-## Testing
+## Testing & Continuous Integration
 
-Run the automated test suite with coverage and verbose logging:
+Run the automated test suite locally:
 
 ```bash
 pytest tests/ -v
 ```
+
+Automated testing is integrated with **GitHub Actions** via `.github/workflows/ci.yml`, running all unit and integration tests on push and pull requests to `main`.
+
+---
+
+## Production & Deployment Considerations
+
+- **Artifact Versioning**: For local demonstration, production model weights and preprocessors are packaged in `artifacts/`. In enterprise production environments, models and scalers should be versioned through a dedicated model registry (e.g. MLflow, AWS S3, or Google Cloud Storage).
+- **Data Governance**: Raw datasets are excluded from git version control via `.gitignore` to prevent repository bloat.
+- **Audit Logging**: Local audit logs append predictions synchronously with thread-safe locking. Under heavy concurrent multi-worker load, delegate log writes to an asynchronous message broker (e.g. Celery, RabbitMQ, or Kafka).
 
 ---

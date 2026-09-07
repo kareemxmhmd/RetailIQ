@@ -20,7 +20,7 @@ logger = logging.getLogger(__name__)
 
 def load_artifacts(config: dict) -> Dict[str, Any]:
     """
-    Loads model, scaler, segment mapping, and feature columns from artifacts directory.
+    Loads model, scaler, segment mapping, preprocessor config, and feature columns from artifacts directory.
     """
     logger.info("Loading artifacts...")
     artifacts_dir = config['paths']['artifacts_dir']
@@ -29,6 +29,7 @@ def load_artifacts(config: dict) -> Dict[str, Any]:
     scaler_path = os.path.join(artifacts_dir, 'scaler.pkl')
     segment_map_path = os.path.join(artifacts_dir, 'segment_map.json')
     feature_cols_path = os.path.join(artifacts_dir, 'feature_columns.json')
+    preprocessor_path = os.path.join(artifacts_dir, 'preprocessor_config.json')
     
     model = joblib.load(model_path)
     scaler = joblib.load(scaler_path)
@@ -41,11 +42,17 @@ def load_artifacts(config: dict) -> Dict[str, Any]:
     with open(feature_cols_path, 'r') as f:
         feature_columns = json.load(f)
         
+    preprocessor_config = {}
+    if os.path.exists(preprocessor_path):
+        with open(preprocessor_path, 'r') as f:
+            preprocessor_config = json.load(f)
+        
     return {
         'model': model,
         'scaler': scaler,
         'segment_map': segment_map,
-        'feature_columns': feature_columns
+        'feature_columns': feature_columns,
+        'preprocessor_config': preprocessor_config
     }
 
 def predict_segment(rfm_input: Dict[str, float], artifacts: Dict[str, Any]) -> Dict[str, Any]:
@@ -60,6 +67,19 @@ def predict_segment(rfm_input: Dict[str, float], artifacts: Dict[str, Any]) -> D
         
     import pandas as pd
     X = pd.DataFrame([features], columns=feature_cols)
+    
+    # Check preprocessor configuration for clipping and log-transformation
+    preprocessor = artifacts.get('preprocessor_config')
+    if preprocessor:
+        clip_thresholds = preprocessor.get('clip_thresholds', {})
+        for col, thresh in clip_thresholds.items():
+            if col in X.columns and thresh is not None:
+                X[col] = X[col].clip(upper=thresh)
+        if preprocessor.get('log_transform', True):
+            X = np.log1p(X)
+    elif artifacts.get('log_transform', False):
+        X = np.log1p(X)
+        
     X_scaled = artifacts['scaler'].transform(X)
     
     cluster_id = int(artifacts['model'].predict(X_scaled)[0])

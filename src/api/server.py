@@ -66,6 +66,9 @@ def predict(req: PredictRequest) -> PredictResponse:
             segment=segment,
             description=description
         )
-    except Exception as e:
-        logger.error(f"Prediction error: {e}")
-        raise HTTPException(status_code=500, detail=str(e))
+    except ValueError as ve:
+        logger.warning(f"Validation or feature error: {ve}")
+        raise HTTPException(status_code=422, detail=str(ve))
+    except Exception:
+        logger.exception("Unexpected error during customer segment prediction")
+        raise HTTPException(status_code=500, detail="Internal server error during prediction")

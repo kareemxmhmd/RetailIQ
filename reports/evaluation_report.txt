@@ -1,15 +1,75 @@
-Evaluation Report
-=================
+RetailIQ Customer Segmentation — Evaluation Report
+==================================================
 
-Silhouette Score: 0.8958
+1. Clustering Performance Metrics:
+----------------------------------
+Number of Clusters (k):   8
+Silhouette Score:         0.3036  (Range [-1, 1], higher is better)
+Calinski-Harabasz Index:  2848.10 (Higher indicates denser, better-separated clusters)
+Davies-Bouldin Index:     0.9904  (Lower indicates better clustering separation)
 
-Cluster Sizes:
+2. Cluster Stability Assessment:
+--------------------------------
+Mean Bootstrap ARI:       0.9248 (80% sub-sample resampling)
+Min Bootstrap ARI:        0.7136
+Mean Seed Stability ARI:  0.9810 (across 5 random initializations)
+
+3. Cluster Segment Sizes:
+-------------------------
 Segment
-Loyal    4312
-VIP        26
+Churned       859
+Dormant       760
+Occasional    675
+Regular       633
+At-Risk       497
+Loyal         409
+New           292
+VIP           213
 
-Cluster Stats (Means):
-           Recency  Frequency      Monetary
-Segment                                    
-Loyal    93.057978   3.897263   1543.536842
-VIP       6.038462  66.423077  85826.078077
+4. Cluster Centroid Stats (Means):
+----------------------------------
+            Recency  Frequency  Monetary
+Segment                                 
+At-Risk       50.53       7.33   3654.37
+Churned      244.14       1.16    238.93
+Dormant      142.03       2.40    993.90
+Loyal          6.33       7.11   2916.15
+New            8.17       2.12    490.80
+Occasional    48.57       1.25    282.48
+Regular       30.46       3.39   1076.74
+VIP            7.52      26.08  18319.78
+
+5. Cluster Centroid Stats (Medians):
+------------------------------------
+            Recency  Frequency  Monetary
+Segment                                 
+At-Risk        38.0        7.0   2718.60
+Churned       247.0        1.0    215.72
+Dormant       120.0        2.0    792.50
+Loyal           5.0        7.0   2134.01
+New             8.0        2.0    427.52
+Occasional     47.0        1.0    267.13
+Regular        27.0        3.0    946.64
+VIP             4.0       19.0   8152.71
+
+6. Behavioral & Transactional Profiles (Means):
+-----------------------------------------------
+            AvgBasketSize  AvgBasketValue  Tenure  UniqueProducts
+Segment                                                          
+At-Risk            179.36          725.55  256.66          113.24
+Churned             15.75          221.74    9.52           17.12
+Dormant             41.10          527.10  102.65           45.34
+Loyal              119.97          594.53  257.77          113.42
+New                 15.93          262.58  111.52           40.48
+Occasional          14.70          250.84   31.27           23.53
+Regular             15.72          362.29  190.10           64.32
+VIP                 40.30          664.76  341.31          218.46
+
+7. Methodological Notes & Limitations:
+---------------------------------------
+- Preprocessing: Monetary and Frequency are log-transformed (np.log1p) and scaled with StandardScaler,
+  preventing wholesale outliers from collapsing the space into 2 clusters.
+- Outlier Handling: Extreme values above the 99.9th percentile are clipped prior to transformation.
+- Taxonomy Alignment: Segments are mapped to business personas via multi-dimensional RFM archetype matching.
+- Model Limitation: KMeans assumes spherical clusters in Euclidean space. Highly correlated features or
+  non-convex geometries should be monitored using the Population Stability Index (PSI) drift monitor.
